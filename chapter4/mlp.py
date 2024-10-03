@@ -1,7 +1,8 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+# sys.path.append('../')
 
 from chapter3 import Accumulator
 from chapter3 import accuracy, evaluate_accuracy
@@ -23,7 +24,6 @@ train_iter = data.DataLoader(mnist_train, batch_size, shuffle=True, num_workers=
 test_iter = data.DataLoader(mnist_test, batch_size, shuffle=False, num_workers=worker_num)
 
 net = nn.Sequential(nn.Flatten(), nn.Linear(784, 256), nn.ReLU(), nn.Linear(256, 10))
-
 def init_weights(m):
     if type(m) == nn.Linear:
         nn.init.normal_(m.weight, std=0.01)
@@ -33,15 +33,20 @@ net.apply(init_weights)
 loss = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(net.parameters(), lr=0.1)
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('training on', device)
+net.to(device)
+
 num_epochs = 10
 for epoch in range(num_epochs):
     print(f'epoch {epoch+1} / {num_epochs}')
     metric = Accumulator(3)
     for X, y in train_iter:
+        X, y = X.to(device), y.to(device)
         optimizer.zero_grad()
         y_hat = net(X)
         l = loss(y_hat, y)
         l.backward()
         optimizer.step()
         metric.add(float(l) * len(y), accuracy(y_hat, y), y.numel())
-    print(f'loss {metric[0]/metric[2]:.3f}, train acc {metric[1]/metric[2]:.3f}, eval acc {evaluate_accuracy(net, test_iter)}')
+    print(f'loss {metric[0]/metric[2]:.3f}, train acc {metric[1]/metric[2]:.3f}, eval acc {evaluate_accuracy(net, test_iter, device)}')

@@ -1,3 +1,5 @@
+import torch
+
 class Accumulator:  #@save
     """在n个变量上累加"""
     def __init__(self, n):
@@ -11,7 +13,13 @@ class Accumulator:  #@save
 
     def __getitem__(self, idx):
         return self.data[idx]
-
+def synthetic_data(w, b, num_examples):  #@save
+    """生成y=Xw+b+噪声"""
+    X = torch.normal(0, 1, (num_examples, len(w)))
+    # y = torch.matmul(X, w) + b
+    y = X@w + b
+    y += torch.normal(0, 0.01, y.shape)
+    return X, y.reshape((-1, 1))
 def accuracy(y_hat, y):  #@save
     """计算预测正确的数量"""
     if len(y_hat.shape) > 1 and y_hat.shape[1] > 1:

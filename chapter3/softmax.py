@@ -47,5 +47,5 @@ for epoch in range(num_epochs):
         l = loss(y_hat, y)
         l.backward()
         optimizer.step()
-        metric.add(float(l.sum()), accuracy(y_hat, y, device), y.numel())
-    print(f'loss {metric[0]/metric[2]:.3f}, train acc {metric[1]/metric[2]:.3f}, eval acc {evaluate_accuracy(net, test_iter)}')
+        metric.add(float(l.sum()), accuracy(y_hat, y), y.numel())
+    print(f'loss {metric[0]/metric[2]:.3f}, train acc {metric[1]/metric[2]:.3f}, eval acc {evaluate_accuracy(net, test_iter, device)}')
