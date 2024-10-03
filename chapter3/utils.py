@@ -30,6 +30,7 @@ def accuracy(y_hat, y):  #@save
 def evaluate_accuracy(net, data_iter, device):  #@save
     """计算在指定数据集上模型的精度"""
     metric = Accumulator(2)  # 正确预测数、预测总数
+    net.eval()
     for X, y in data_iter:
         X, y = X.to(device), y.to(device)
         metric.add(accuracy(net(X), y), y.shape[0])

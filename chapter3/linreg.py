@@ -36,6 +36,7 @@ trainer = torch.optim.SGD(net.parameters(), lr=0.03)
 
 num_epochs = 3
 for epoch in range(num_epochs):
+    net.train()
     for X, y in data_iter:
         l = loss(net(X) ,y) # net(X): (batch, dim: 1)
         trainer.zero_grad()

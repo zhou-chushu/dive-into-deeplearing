@@ -2,7 +2,6 @@ import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-# sys.path.append('../')
 
 from chapter3 import Accumulator
 from chapter3 import accuracy, evaluate_accuracy
@@ -41,6 +40,7 @@ num_epochs = 10
 for epoch in range(num_epochs):
     print(f'epoch {epoch+1} / {num_epochs}')
     metric = Accumulator(3)
+    net.train()
     for X, y in train_iter:
         X, y = X.to(device), y.to(device)
         optimizer.zero_grad()
